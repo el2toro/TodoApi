@@ -22,7 +22,7 @@ app.MapPost("/todoitems", async (TodoItem todoItem, TodoDbContext db) =>
     return Results.Created($"/todoitems/{todoItem.Id}", todoItem);
 });
 
-app.MapPut("/todoitems", async (int id, TodoItem todoItem, TodoDbContext db) =>
+app.MapPut("/todoitems/{id}", async (int id, TodoItem todoItem, TodoDbContext db) =>
 {
     var todo = await db.TodoItems.FindAsync(id);
     if (todo is null) return Results.NotFound($"No todo item found with id: {id}");
@@ -30,12 +30,11 @@ app.MapPut("/todoitems", async (int id, TodoItem todoItem, TodoDbContext db) =>
     todo.Name = todoItem.Name;
     todo.IsComplete = todoItem.IsComplete;
 
-    //db.Update(todo);
     await db.SaveChangesAsync();
     return Results.NoContent();
 });
 
-app.MapDelete("/todoitems", async (int id, TodoDbContext db) =>
+app.MapDelete("/todoitems/{id}", async (int id, TodoDbContext db) =>
 {
     if (await db.TodoItems.FindAsync(id) is TodoItem todo)
     {
